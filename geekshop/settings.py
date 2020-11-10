@@ -25,8 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'd)t$2tqx1n_e2_517j#26=^f6p5yeps#2312tb36*zu%vm0s9^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # IP-адрес 194.67.111.29
 # Логин: root
