@@ -4,6 +4,9 @@ from django.urls import reverse, reverse_lazy
 from django.db import transaction
 from django.dispatch import receiver
 from django.forms import inlineformset_factory
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
@@ -20,6 +23,10 @@ class OrderList(ListView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+    @method_decorator(login_required())
+    def dispatch(self, *args, **kwargs):
+        return super(ListView, self).dispatch(*args, **kwargs)
 
 
 class OrderItemsCreate(CreateView):
