@@ -19,7 +19,7 @@ def main(request):
     ''' Главная страница '''
     title = 'главная'
 
-    products_list = Product.objects.all()[:3]
+    products_list = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')[:3]
 
     content = {
         'title': title,
@@ -30,9 +30,8 @@ def main(request):
 
 
 def get_hot_product():
-    products = Product.objects.all()
-
-    return random.sample(list(products), 1)[0]
+    products_hot = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
+    return random.sample(list(products_hot), 1)[0]
 
 
 def get_same_products(hot_product):
