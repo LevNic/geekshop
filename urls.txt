@@ -1,0 +1,11 @@
+http://194.67.111.29/
+http://194.67.111.29/products/
+http://194.67.111.29/contact/
+http://194.67.111.29/products/category/1/
+http://194.67.111.29/products/category/2/
+http://194.67.111.29/products/category/3/
+http://194.67.111.29/products/category/4/
+http://194.67.111.29/basket/
+http://194.67.111.29/order/
+http://194.67.111.29/auth/edit/
+http://194.67.111.29/order/update/1/
