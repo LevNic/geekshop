@@ -70,7 +70,6 @@ if DEBUG:
     def show_toolbar(request):
         return True
 
-
     DEBUG_TOOLBAR_CONFIG = {
         'SHOW_TOOLBAR_CALLBACK': show_toolbar,
     }
@@ -174,9 +173,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Раскомментировать при работе или отладке локально
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
 
 # Только для отладки на сервере
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
