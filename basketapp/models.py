@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.functional import cached_property
 
 from mainapp.models import Product
 
@@ -18,13 +19,10 @@ class BasketQuerySet(models.QuerySet):
 class Basket(models.Model):
     # objects = BasketQuerySet.as_manager()
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE, related_name='basket')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='basket')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(
-        verbose_name='количество', default=0)
-    add_datetime = models.DateTimeField(
-        verbose_name='время', auto_now_add=True)
+    quantity = models.PositiveIntegerField(verbose_name='количество', default=0)
+    add_datetime = models.DateTimeField(verbose_name='время', auto_now_add=True)
 
     def __str__(self):
         pass
@@ -36,6 +34,10 @@ class Basket(models.Model):
     @staticmethod
     def get_item(pk):
         return Basket.objects.get(pk=pk)
+
+    @cached_property
+    def get_items_cached(self):
+        return self.user.basket.select_related()
 
     @property
     def product_cost(self):
@@ -59,6 +61,14 @@ class Basket(models.Model):
     @staticmethod
     def get_items(user):
         return Basket.objects.filter(user=user).order_by('product__category')
+
+    def get_total_quantity(self):
+        _items = self.get_items_cached
+        return sum(list(map(lambda x: x.quantity, _items)))
+
+    def get_total_cost(self):
+        _items = self.get_items_cached
+        return sum(list(map(lambda x: x.product_cost, _items)))
 
     # def delete(self):
     #     self.product.quantity += self.quantity
