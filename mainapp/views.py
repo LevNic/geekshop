@@ -1,22 +1,36 @@
 import os
-
 import json
 import random
 
 from datetime import datetime
 
 from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
+from django.core.cache import cache
+
 from mainapp.models import Product, ProductCategory
 from basketapp.models import Basket
 from geekshop.settings import BASE_DIR
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
 
+# Кэширование меню категорий
+def get_links_menu():
+    if settings.LOW_CACHE:
+        key = 'links_menu'
+        links_menu = cache.get(key)
+        if links_menu is None:
+            links_menu = ProductCategory.objects.filter(is_active=True)
+            cache.set(key, links_menu)
+        return links_menu
+    else:
+        return ProductCategory.objects.filter(is_active=True)
+
 
 def main(request):
-    ''' Главная страница '''
+    """ Главная страница """
     title = 'главная'
 
     products_list = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')[:3]
@@ -41,13 +55,16 @@ def get_same_products(hot_product):
 
 
 def products(request, pk=None, page=1):
-    '''Страница продукты'''
+    """Страница продукты"""
 
     title = 'продукты'
-    links_menu = ProductCategory.objects.filter(is_active=True)
-    basket = []
-    if request.user.is_authenticated:
-        basket = Basket.objects.filter(user=request.user)
+    if settings.LOW_CACHE:
+        links_menu = get_links_menu()
+    else:
+        links_menu = ProductCategory.objects.filter(is_active=True)
+    # basket = []
+    # if request.user.is_authenticated:
+    #     basket = Basket.objects.filter(user=request.user)
 
     if pk is not None:
         if pk == 0:
@@ -91,7 +108,7 @@ def products(request, pk=None, page=1):
 
 
 def contacts(request):
-    '''Страница контакты'''
+    """Страница контакты"""
     title = 'о нас'
     visit_date = datetime.now()
     location = None
@@ -113,11 +130,15 @@ def not_found(request, exceptiion):
 
 
 def product(request, pk):
+    if settings.LOW_CACHE:
+        links_menu = get_links_menu()
+    else:
+        links_menu = ProductCategory.objects.filter(is_active=True)
     product_item = get_object_or_404(Product, pk=pk)
 
     content = {
         'title': product_item.name,
-        'links_menu': ProductCategory.objects.all(),
+        'links_menu': links_menu,
         'product': product_item,
         'same_products': get_same_products(product_item),
     }
