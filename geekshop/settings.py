@@ -179,7 +179,7 @@ STATIC_URL = '/static/'
 # ]
 
 # Только для отладки на сервере
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 
